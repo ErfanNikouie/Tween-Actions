@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 
 namespace Mosaic.Base.TweenActions
@@ -11,7 +8,6 @@ namespace Mosaic.Base.TweenActions
     public enum ActionType
     {
         Transform,
-        RectTransform,
         Color,
     }
 

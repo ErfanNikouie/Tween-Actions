@@ -1,13 +1,13 @@
 ﻿using UnityEditor;
 
-namespace Mosaic.Base.TweenActions
+namespace Mosaic.Base.TweenActions.Editor
 {
     [CustomEditor(typeof(TweenAction)), CanEditMultipleObjects]
-    public class TweenActionEditor : Editor
-    {   
+    public class TweenActionEditor : UnityEditor.Editor
+	{   
         public SerializedObject action;
         public SerializedProperty actionTProp, transformActionTProp, colorActionTProp;
-        public SerializedProperty setAtProp, localProp, vector3Prop, multiplyProp, fValueAtProp, fValueAddProp, multiplierProp;
+        public SerializedProperty setAtProp, localProp, vector3Prop, multiplyProp, multiplierProp;
         public SerializedProperty v2ValueAtProp, v3ValueAtProp, v2ValueAddProp, v3ValueAddProp;
         public SerializedProperty cValueAtProp;
         public SerializedProperty durationProp, easeProp, customEaseProp, easeCurveProp;
@@ -23,8 +23,6 @@ namespace Mosaic.Base.TweenActions
             localProp = action.FindProperty("local");
             multiplyProp = action.FindProperty("multiply");
             vector3Prop = action.FindProperty("vector3");
-            fValueAtProp = action.FindProperty("fValueAt");
-            fValueAddProp = action.FindProperty("fValueAdd");
             multiplierProp = action.FindProperty("multiplier");
 
             v2ValueAtProp = action.FindProperty("v2ValueAt");
@@ -51,10 +49,6 @@ namespace Mosaic.Base.TweenActions
             switch(state)
             {
                 case ActionType.Transform:
-                    DrawTransform();
-                    break;
-                    
-                case ActionType.RectTransform:
                     DrawTransform();
                     break;
 

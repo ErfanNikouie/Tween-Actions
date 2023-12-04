@@ -6,26 +6,45 @@ namespace Mosaic.Base.TweenActions
 	[CreateAssetMenu(fileName = "ResponsiveTweenActionObject", menuName = "TweenAction/Responsive Action", order = 1)]
 	public class ResponsiveTweenAction : TweenActionCore
 	{
-		public TransformActionType transformActionType;
+		[SerializeField] private TransformActionType transformActionType;
 
-		public bool setAt;
-		public bool multiply;
+		[SerializeField] private bool local;
+		[SerializeField] private bool setAt;
+		[SerializeField] private bool multiply;
 
-		public float multiplier;
+		[SerializeField] private float multiplier;
 
-		public Vector2 v2ValueAt;
-		public Vector2 v2ValueAdd;
+		[SerializeField] private Vector2 v2ValueAt;
+		[SerializeField] private Vector2 v2ValueAdd;
 
-		public float duration;
+		[SerializeField] private float duration;
 
-		public bool customEase;
-		public Ease ease;
-		public AnimationCurve easeCurve;
+		[SerializeField] private bool customEase;
+		[SerializeField] private Ease ease;
+		[SerializeField] private AnimationCurve easeCurve;
+
+		#region Properties
+		public TransformActionType TransformActionType => transformActionType;
+
+		public bool Local => local;
+		public bool SetAt => setAt;
+		public bool Multiply => multiply;
+
+		public float Multiplier => multiplier;
+
+		public Vector2 V2ValueAt => v2ValueAt;
+		public Vector2 V2ValueAdd => v2ValueAdd;
+
+		public float Duration => duration;
+
+		public bool CustomEase => customEase;
+		public Ease Ease => ease;
+		public AnimationCurve EaseCurve => easeCurve;
+		#endregion
 
 		public override Tween Act(GameObject o)
 		{
-			//return TweenActor.Act(this, o);
-			return null;
+			return ResponsiveTweenActor.Act(this, o.GetComponent<RectTransform>());
 		}
 	}
 }

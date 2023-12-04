@@ -12,15 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab0ee1b3a757eb540b4d0749eb2d9ae8, type: 3}
   m_Name: Color
   m_EditorClassIdentifier: 
-  actionType: 2
+  actionType: 1
   transformActionType: 2
   colorActionType: 1
   local: 0
   setAt: 1
   vector3: 1
   multiply: 0
-  fValueAt: 0
-  fValueAdd: 0
   multiplier: 0
   v2ValueAt: {x: 0, y: 0}
   v3ValueAt: {x: 3, y: 3, z: 3}

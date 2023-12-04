@@ -1,8 +1,5 @@
 using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Mosaic.Base.TweenActions
 {
@@ -10,7 +7,7 @@ namespace Mosaic.Base.TweenActions
 
     public class TweenActionSequence : TweenActionCore
     {
-        public TweenAction[] appendingActions;
+        [SerializeField] private TweenAction[] appendingActions;
         
         [System.Serializable]
         public struct InsertingAction
@@ -19,7 +16,10 @@ namespace Mosaic.Base.TweenActions
             public TweenAction insertingAction;
         }
 
-        public InsertingAction[] insertingActions;
+        [SerializeField] private InsertingAction[] insertingActions;
+
+        public TweenAction[] AppendingActions => appendingActions;
+        public InsertingAction[] InsertingActions => insertingActions;
 
         public override Tween Act(GameObject o)
         {

@@ -6,17 +6,18 @@ namespace Mosaic.Base.TweenActions
 {
     public static class TweenActor
     {
-        static float xMultiplier, yMultiplier;
+        static Vector2 screenMultiplier;
+        static bool init = false;
 
-        private static void SetUpResolution(Vector2 refRes, Vector2 actualRes)
+        public static void InitializeResponsive()
         {
-            float xRef = refRes.x;
-			float yRef = refRes.y;
-			float xActual = actualRes.x;
-			float yActual = actualRes.y;
+            if (init)
+                return;
 
-            xMultiplier = xActual / xRef;
-            yMultiplier = yActual / yRef;
+            Vector2 refRes = Resources.LoadAll<ResponsiveTweenActionSettings>("MosaicScriptables")[0].ReferenceResolution;
+
+			screenMultiplier.x = Screen.width / refRes.x;
+			screenMultiplier.y = Screen.height / refRes.y;
         }
 
 		private static void LogTypeError()
@@ -27,7 +28,7 @@ namespace Mosaic.Base.TweenActions
         #region Act
         public static Tween Act(TweenAction action, GameObject o)
         {
-            switch (action.actionType)
+            switch (action.ActionType)
             {
                 case ActionType.Transform:
                         return Act(action, o.transform);
@@ -49,7 +50,7 @@ namespace Mosaic.Base.TweenActions
 
         public static Tween Act(TweenAction action, Transform t)
         {
-            if (action.actionType != ActionType.Transform || !t)
+            if (action.ActionType != ActionType.Transform || !t)
             {
                 Debug.Log("Transform");
                 LogTypeError();
@@ -58,16 +59,16 @@ namespace Mosaic.Base.TweenActions
 
             Vector3 end;
 
-            switch (action.transformActionType)
+            switch (action.TransformActionType)
             {
                 case TransformActionType.Position:
-                    end = (action.local) ? t.localPosition : t.position;
+                    end = (action.Local) ? t.localPosition : t.position;
                     FindEndPoint(action, ref end);
 
                     return TweenPosition(action, t, end);
 
                 case TransformActionType.Rotation:
-                    end = (action.local) ? t.localRotation.eulerAngles : t.rotation.eulerAngles;
+                    end = (action.Local) ? t.localRotation.eulerAngles : t.rotation.eulerAngles;
                     FindEndPoint(action, ref end);
 
                     return TweenRotation(action, t, end);
@@ -86,7 +87,7 @@ namespace Mosaic.Base.TweenActions
 
         public static Tween Act(TweenAction action, RectTransform t)
         {
-            if (action.actionType != ActionType.RectTransform || !t)
+            if (action.ActionType != ActionType.RectTransform || !t)
             {
 				Debug.Log("RectTransform");
 				LogTypeError();
@@ -95,16 +96,16 @@ namespace Mosaic.Base.TweenActions
 
             Vector3 end;
 
-            switch (action.transformActionType)
+            switch (action.TransformActionType)
             {
                 case TransformActionType.Position:
-                    end = (action.local) ? t.localPosition : t.position;
+                    end = (action.Local) ? t.localPosition : t.position;
                     FindEndPoint(action, ref end);
 
                     return TweenRectPosition(action, t, end);
 
                 case TransformActionType.Rotation:
-                    end = (action.local) ? t.localRotation.eulerAngles : t.rotation.eulerAngles;
+                    end = (action.Local) ? t.localRotation.eulerAngles : t.rotation.eulerAngles;
                     FindEndPoint(action, ref end);
 
                     return TweenRectRotation(action, t, end);
@@ -123,14 +124,14 @@ namespace Mosaic.Base.TweenActions
 
         public static Tween Act(TweenAction action, SpriteRenderer r)
         {
-            if (action.actionType != ActionType.Color || !r)
+            if (action.ActionType != ActionType.Color || !r)
             {
 				Debug.Log("Color");
 				LogTypeError();
                 return null;
             }
 
-            Color end = action.cValueAt;
+            Color end = action.CValueAt;
             FindEndPoint(action, r.color, ref end);
 
             return TweenColor(action, r, end);
@@ -138,14 +139,14 @@ namespace Mosaic.Base.TweenActions
 
         public static Tween Act(TweenAction action, Image i)
         {
-            if (action.actionType != ActionType.Color || !i)
+            if (action.ActionType != ActionType.Color || !i)
             {
 				Debug.Log("Color");
 				LogTypeError();
                 return null;
             }
 
-            Color end = action.cValueAt;
+            Color end = action.CValueAt;
             FindEndPoint(action, i.color, ref end);
 
             return TweenColor(action, i, end);
@@ -155,15 +156,14 @@ namespace Mosaic.Base.TweenActions
         {
             Sequence s = DOTween.Sequence();
 
-            foreach (TweenAction action in seq.appendingActions)
-            {
-                s.Append(Act(action, o));
-            }
+            TweenAction[] append = seq.AppendingActions;
+            TweenActionSequence.InsertingAction[] insert = seq.InsertingActions;
 
-            foreach (TweenActionSequence.InsertingAction action in seq.insertingActions)
-            {
+            foreach (TweenAction action in append)
+                s.Append(Act(action, o));
+
+            foreach (TweenActionSequence.InsertingAction action in insert)
                 s.Insert(action.insertingTime, Act(action.insertingAction, o));
-            }
 
             return s;
         }
@@ -173,28 +173,28 @@ namespace Mosaic.Base.TweenActions
         //Transform
         private static void FindEndPoint(TweenAction action, ref Vector3 end)
         {
-            if (action.transformActionType == TransformActionType.Scale)
+            if (action.TransformActionType == TransformActionType.Scale)
             {
-                if (action.setAt)
-                    end = (action.vector3) ? action.v3ValueAt : (Vector3)action.v2ValueAt;
-                else if (!action.multiply)
-                    end += (action.vector3) ? action.v3ValueAdd : (Vector3)action.v2ValueAdd;
+                if (action.SetAt)
+                    end = (action.Vector3) ? action.V3ValueAt : (Vector3)action.V2ValueAt;
+                else if (!action.Multiply)
+                    end += (action.Vector3) ? action.V3ValueAdd : (Vector3)action.V2ValueAdd;
                 else
-                    end *= action.multiplier;
+                    end *= action.Multiplier;
 
                 return;
             }
 
-            if (action.setAt)
-                end = (action.vector3) ? action.v3ValueAt : (Vector3)action.v2ValueAt;
+            if (action.SetAt)
+                end = (action.Vector3) ? action.V3ValueAt : (Vector3)action.V2ValueAt;
             else
-                end += (action.vector3) ? action.v3ValueAdd : (Vector3)action.v2ValueAdd;
+                end += (action.Vector3) ? action.V3ValueAdd : (Vector3)action.V2ValueAdd;
         }
 
         //Color
         private static void FindEndPoint(TweenAction action, Color start, ref Color end)
         {
-            switch (action.colorActionType)
+            switch (action.ColorActionType)
             {
                 case ColorActionType.NotAlpha:
                     end.a = start.a;
@@ -202,11 +202,11 @@ namespace Mosaic.Base.TweenActions
 
                 case ColorActionType.Alpha:
                     end = start;
-                    end.a = action.cValueAt.a;
+                    end.a = action.CValueAt.a;
                     break;
                 
                 case ColorActionType.Both:
-                    end = action.cValueAt;
+                    end = action.CValueAt;
                     break;
 
                 default:
@@ -218,108 +218,100 @@ namespace Mosaic.Base.TweenActions
         //Tween Transform
         private static Tween TweenPosition(TweenAction action, Transform t, Vector3 end)
         {
-            if (action.local)
+            if (action.Local)
             {
-                if (action.customEase)
-                    return t.DOLocalMove(end, action.duration).SetEase(action.easeCurve);
-                else
-                    return t.DOLocalMove(end, action.duration).SetEase(action.ease);
+                if (action.CustomEase)
+                    return t.DOLocalMove(end, action.Duration).SetEase(action.EaseCurve);
+
+                return t.DOLocalMove(end, action.Duration).SetEase(action.Ease);
             }
-            else
-            {
-                if (action.customEase)
-                    return t.DOMove(end, action.duration).SetEase(action.easeCurve);
-                else
-                    return t.DOMove(end, action.duration).SetEase(action.ease);
-            }
+
+            if (action.CustomEase)
+                return t.DOMove(end, action.Duration).SetEase(action.EaseCurve);
+
+            return t.DOMove(end, action.Duration).SetEase(action.Ease);
         }
 
         private static Tween TweenRotation(TweenAction action, Transform t, Vector3 end)
         {
-            if (action.local)
+            if (action.Local)
             {
-                if (action.customEase)
-                    return t.DOLocalRotate(end, action.duration).SetEase(action.easeCurve);
-                else
-                    return t.DOLocalRotate(end, action.duration).SetEase(action.ease);
+                if (action.CustomEase)
+                    return t.DOLocalRotate(end, action.Duration).SetEase(action.EaseCurve);
+
+                return t.DOLocalRotate(end, action.Duration).SetEase(action.Ease);
             }
-            else
-            {
-                if (action.customEase)
-                    return t.DORotate(end, action.duration).SetEase(action.easeCurve);
-                else
-                    return t.DORotate(end, action.duration).SetEase(action.ease);
-            }
+
+            if (action.CustomEase)
+                return t.DORotate(end, action.Duration).SetEase(action.EaseCurve);
+
+            return t.DORotate(end, action.Duration).SetEase(action.Ease);
         }
 
         private static Tween TweenScale(TweenAction action, Transform t, Vector3 end)
         {
-            if (action.customEase)
-                return t.DOScale(end, action.duration).SetEase(action.easeCurve);
-            else
-                return t.DOScale(end, action.duration).SetEase(action.ease);
+            if (action.CustomEase)
+                return t.DOScale(end, action.Duration).SetEase(action.EaseCurve);
+
+            return t.DOScale(end, action.Duration).SetEase(action.Ease);
         }
 
         //Rect Transform
         private static Tween TweenRectPosition(TweenAction action, RectTransform t, Vector3 end)
         {
-            if (action.local)
+            if (action.Local)
             {
-                if (action.customEase)
-                    return t.DOLocalMove(end, action.duration).SetEase(action.easeCurve);
-                else
-                    return t.DOLocalMove(end, action.duration).SetEase(action.ease);
+                if (action.CustomEase)
+                    return t.DOLocalMove(end, action.Duration).SetEase(action.EaseCurve);
+
+                return t.DOLocalMove(end, action.Duration).SetEase(action.Ease);
             }
-            else
-            {
-                if (action.customEase)
-                    return t.DOMove(end, action.duration).SetEase(action.easeCurve);
-                else
-                    return t.DOMove(end, action.duration).SetEase(action.ease);
-            }
+
+            if (action.CustomEase)
+                return t.DOMove(end, action.Duration).SetEase(action.EaseCurve);
+
+            return t.DOMove(end, action.Duration).SetEase(action.Ease);
         }
 
         private static Tween TweenRectRotation(TweenAction action, RectTransform t, Vector3 end)
         {
-            if (action.local)
+            if (action.Local)
             {
-                if (action.customEase)
-                    return t.DOLocalRotate(end, action.duration).SetEase(action.easeCurve);
-                else
-                    return t.DOLocalRotate(end, action.duration).SetEase(action.ease);
+                if (action.CustomEase)
+                    return t.DOLocalRotate(end, action.Duration).SetEase(action.EaseCurve);
+
+                return t.DOLocalRotate(end, action.Duration).SetEase(action.Ease);
             }
-            else
-            {
-                if (action.customEase)
-                    return t.DORotate(end, action.duration).SetEase(action.easeCurve);
-                else
-                    return t.DORotate(end, action.duration).SetEase(action.ease);
-            }
+
+            if (action.CustomEase)
+                return t.DORotate(end, action.Duration).SetEase(action.EaseCurve);
+
+            return t.DORotate(end, action.Duration).SetEase(action.Ease);
         }
 
         private static Tween TweenRectScale(TweenAction action, RectTransform t, Vector3 end)
         {
-            if (action.customEase)
-                return t.DOScale(end, action.duration).SetEase(action.easeCurve);
-            else
-                return t.DOScale(end, action.duration).SetEase(action.ease);
+            if (action.CustomEase)
+                return t.DOScale(end, action.Duration).SetEase(action.EaseCurve);
+
+            return t.DOScale(end, action.Duration).SetEase(action.Ease);
         }
 
         //Tween Color
         private static Tween TweenColor(TweenAction action, SpriteRenderer r, Color end)
         {
-            if (action.customEase)
-                return r.DOColor(end, action.duration).SetEase(action.easeCurve);
-            else
-                return r.DOColor(end, action.duration).SetEase(action.ease);
+            if (action.CustomEase)
+                return r.DOColor(end, action.Duration).SetEase(action.EaseCurve);
+
+            return r.DOColor(end, action.Duration).SetEase(action.Ease);
         }
 
         private static Tween TweenColor(TweenAction action, Image i, Color end)
         {
-            if (action.customEase)
-                return i.DOColor(end, action.duration).SetEase(action.easeCurve);
-            else
-                return i.DOColor(end, action.duration).SetEase(action.ease);
+            if (action.CustomEase)
+                return i.DOColor(end, action.Duration).SetEase(action.EaseCurve); 
+
+            return i.DOColor(end, action.Duration).SetEase(action.Ease);
         }
         #endregion
     }

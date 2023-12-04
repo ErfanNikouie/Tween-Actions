@@ -1,14 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class TweenStarter : MonoBehaviour
+namespace Mosaic.Base.TweenActions.Sample
 {
-    [SerializeField] Mosaic.Base.TweenActions.TweenActionCore action;
+	public class TweenStarter : MonoBehaviour
+	{
+		[SerializeField] private TweenActionCore action;
 
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Space))
-            action.Act(this.gameObject);
-    }
+		void Update()
+		{
+			if (Input.GetKeyDown(KeyCode.Space))
+				action.Act(this.gameObject);
+		}
+	}
 }

@@ -8,7 +8,7 @@ namespace Mosaic.Base.TweenActions.Editor
         public SerializedObject action;
         public SerializedProperty transformActionTProp;
         public SerializedProperty setAtProp, localProp, multiplyProp, multiplierProp;
-        public SerializedProperty v2ValueAtProp, v2ValueAddProp;
+        public SerializedProperty v2ValueAtProp, v2ValueAddProp, anchorProp;
         public SerializedProperty durationProp, easeProp, customEaseProp, easeCurveProp;
 
         void OnEnable() 
@@ -23,8 +23,9 @@ namespace Mosaic.Base.TweenActions.Editor
 
             v2ValueAtProp = action.FindProperty("v2ValueAt");
             v2ValueAddProp = action.FindProperty("v2ValueAdd");
+            anchorProp = action.FindProperty("anchor");
 
-            durationProp = action.FindProperty("duration");
+			durationProp = action.FindProperty("duration");
             easeProp = action.FindProperty("ease");
             customEaseProp = action.FindProperty("customEase");
             easeCurveProp = action.FindProperty("easeCurve");
@@ -52,6 +53,7 @@ namespace Mosaic.Base.TweenActions.Editor
             EditorGUILayout.PropertyField(setAtProp);
 
             TransformActionType state = (TransformActionType)transformActionTProp.enumValueIndex;
+
             switch(state)
             {    
                 case TransformActionType.Scale:
@@ -80,8 +82,12 @@ namespace Mosaic.Base.TweenActions.Editor
                     }
 
                     EditorGUILayout.PropertyField(v2ValueAddProp);
+                    
                     break;
             }
-        }
+
+			if (state == TransformActionType.Position)
+				EditorGUILayout.PropertyField(anchorProp);
+		}
     }
 }

@@ -6,6 +6,7 @@ namespace Mosaic.Base.TweenActions
 {
     public static class ResponsiveTweenActor
     {
+		static Vector2 screenResolution = new Vector2();
 		static Vector2 screenMultiplier = new Vector2();
 		static bool init = false;
 
@@ -16,7 +17,8 @@ namespace Mosaic.Base.TweenActions
 
 			Vector2 refRes = Resources.LoadAll<ResponsiveTweenActionSettings>("MosaicScriptables")[0].ReferenceResolution;
 
-			screenMultiplier = new Vector2(Screen.width / refRes.x, Screen.height / refRes.y);
+			screenResolution = new Vector2(Screen.width, Screen.height);
+			screenMultiplier = screenResolution / refRes;
 		}
 
 		public static Tween Act(ResponsiveTweenAction action, RectTransform t)
@@ -30,7 +32,7 @@ namespace Mosaic.Base.TweenActions
 			{
 				case TransformActionType.Position:
 					end = (action.Local) ? t.localPosition : t.position;
-					FindEndPoint(action, ref end, true);
+					FindEndPoint(action, ref end);
 
 					return TweenRectPosition(action, t, end);
 
@@ -43,7 +45,7 @@ namespace Mosaic.Base.TweenActions
 
 				case TransformActionType.Scale:
 					end = t.localScale;
-					FindEndPoint(action, ref end, true);
+					FindEndPoint(action, ref end);
 
 					return TweenRectScale(action, t, end);
 
@@ -63,6 +65,9 @@ namespace Mosaic.Base.TweenActions
 
 			if(responsive)
 				end *= screenMultiplier;
+
+			if (action.TransformActionType == TransformActionType.Position)
+				end += action.Anchor * screenResolution;
 		}
 
 		//TODO

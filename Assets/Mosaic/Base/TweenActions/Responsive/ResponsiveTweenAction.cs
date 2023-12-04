@@ -16,6 +16,7 @@ namespace Mosaic.Base.TweenActions
 
 		[SerializeField] private Vector2 v2ValueAt;
 		[SerializeField] private Vector2 v2ValueAdd;
+		[SerializeField] private Vector2 anchor;
 
 		[SerializeField] private float duration;
 
@@ -34,6 +35,7 @@ namespace Mosaic.Base.TweenActions
 
 		public Vector2 V2ValueAt => v2ValueAt;
 		public Vector2 V2ValueAdd => v2ValueAdd;
+		public Vector2 Anchor => anchor;
 
 		public float Duration => duration;
 

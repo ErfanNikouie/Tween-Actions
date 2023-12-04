@@ -14,9 +14,6 @@ namespace Mosaic.Base.TweenActions
         public bool setAt;
         public bool vector3;
         public bool multiply;
-        
-        public float fValueAt;
-        public float fValueAdd;
 
         public float multiplier;
 

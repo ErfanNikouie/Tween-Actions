@@ -6,7 +6,20 @@ namespace Mosaic.Base.TweenActions
 {
     public static class TweenActor
     {
-        private static void LogTypeError()
+        static float xMultiplier, yMultiplier;
+
+        private static void SetUpResolution(Vector2 refRes, Vector2 actualRes)
+        {
+            float xRef = refRes.x;
+			float yRef = refRes.y;
+			float xActual = actualRes.x;
+			float yActual = actualRes.y;
+
+            xMultiplier = xActual / xRef;
+            yMultiplier = yActual / yRef;
+        }
+
+		private static void LogTypeError()
         {
             Debug.LogError("Wrong type to tween!");
         }
@@ -88,20 +101,20 @@ namespace Mosaic.Base.TweenActions
                     end = (action.local) ? t.localPosition : t.position;
                     FindEndPoint(action, ref end);
 
-                    return TweenPosition(action, t, end);
+                    return TweenRectPosition(action, t, end);
 
                 case TransformActionType.Rotation:
                     end = (action.local) ? t.localRotation.eulerAngles : t.rotation.eulerAngles;
                     FindEndPoint(action, ref end);
 
-                    return TweenRotation(action, t, end);
+                    return TweenRectRotation(action, t, end);
                         
 
                 case TransformActionType.Scale:
                     end = t.localScale;
                     FindEndPoint(action, ref end);
 
-                    return TweenScale(action, t, end);
+                    return TweenRectScale(action, t, end);
 
                 default:
                     return null;
@@ -176,8 +189,6 @@ namespace Mosaic.Base.TweenActions
                 end = (action.vector3) ? action.v3ValueAt : (Vector3)action.v2ValueAt;
             else
                 end += (action.vector3) ? action.v3ValueAdd : (Vector3)action.v2ValueAdd;
-
-            return;
         }
 
         //Color

@@ -24,7 +24,7 @@ namespace Mosaic.Base.TweenActions
 		[SerializeField] private Ease ease;
 		[SerializeField] private AnimationCurve easeCurve;
 
-		public ResponsiveTweenAction(TweenAction action)
+		private void InitializeUsingTweenAction(TweenAction action)
 		{
 			this.transformActionType = action.TransformActionType;
 			this.local = action.Local;
@@ -37,7 +37,14 @@ namespace Mosaic.Base.TweenActions
 			this.duration = action.Duration;
 			this.customEase = action.CustomEase;
 			this.ease = action.Ease;
-			this.easeCurve = action.EaseCurve;
+			this.easeCurve = action.EaseCurve;			
+		}
+
+		public static ResponsiveTweenAction CreateFromTweenAction(TweenAction action)
+		{
+			ResponsiveTweenAction rta = CreateInstance<ResponsiveTweenAction>();
+			rta.InitializeUsingTweenAction(action);
+			return rta;
 		}
 
 		#region Properties

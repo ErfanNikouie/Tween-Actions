@@ -24,6 +24,22 @@ namespace Mosaic.Base.TweenActions
 		[SerializeField] private Ease ease;
 		[SerializeField] private AnimationCurve easeCurve;
 
+		public ResponsiveTweenAction(TweenAction action)
+		{
+			this.transformActionType = action.TransformActionType;
+			this.local = action.Local;
+			this.setAt = action.SetAt;
+			this.multiply = action.Multiply;
+			this.multiplier = action.Multiplier;
+			this.v2ValueAt = action.V2ValueAt;
+			this.v2ValueAdd = action.V2ValueAdd;
+			this.anchor = new Vector2();
+			this.duration = action.Duration;
+			this.customEase = action.CustomEase;
+			this.ease = action.Ease;
+			this.easeCurve = action.EaseCurve;
+		}
+
 		#region Properties
 		public TransformActionType TransformActionType => transformActionType;
 

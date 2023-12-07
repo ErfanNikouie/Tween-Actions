@@ -58,6 +58,7 @@ namespace Mosaic.Base.TweenActions
         public AnimationCurve EaseCurve => easeCurve;
 		#endregion
 
+
 		public override Tween Act(GameObject o)
         {
             return TweenActor.Act(this, o);

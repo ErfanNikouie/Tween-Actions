@@ -45,7 +45,7 @@ namespace Mosaic.Base.TweenActions
 
 				case TransformActionType.Scale:
 					end = t.localScale;
-					FindEndPoint(action, ref end);
+					FindEndPoint(action, ref end, false);
 
 					return TweenRectScale(action, t, end);
 
